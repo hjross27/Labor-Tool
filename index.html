@@ -149,15 +149,17 @@
             const avgDailySales = daysThisMonth > 0 ? salesMTD / daysThisMonth : 0;
             const daysLeft = getRemainingSalesDays();
 
-            // Required daily % to hit target
+            // Aggressive catch-up math
             const currentLaborCost = salesMTD * currentMTDPercent / 100;
-            const totalTargetLabor = salesMTD * target / 100 + (avgDailySales * daysLeft * target / 100); // rough
-            const requiredDailyPercent = target; // simplified to maintain target pace
+            const totalTargetLabor = (salesMTD + avgDailySales * daysLeft) * target / 100;
+            const requiredRemainingLabor = totalTargetLabor - currentLaborCost;
+            const requiredDailyLabor = requiredRemainingLabor / daysLeft;
+            const requiredDailyPercent = (requiredDailyLabor / avgDailySales) * 100;
 
             let msg = `Avg daily sales (MTD): <strong>$${avgDailySales.toFixed(0)}</strong><br>`;
             msg += `Current MTD Labor %: <strong>${currentMTDPercent.toFixed(1)}%</strong><br>`;
             msg += `Sales days left (no Sundays): <strong>${daysLeft}</strong><br><br>`;
-            msg += `To hit <strong>${target}%</strong> end of month, maintain average daily labor of <strong>${requiredDailyPercent.toFixed(1)}%</strong> for remaining days.`;
+            msg += `To hit your <strong>${target}%</strong> goal, you need to run at <strong>${requiredDailyPercent.toFixed(1)}%</strong> average daily labor for the rest of the month.`;
             document.getElementById('monthly-insights').innerHTML = msg;
             document.getElementById('monthly-result').classList.remove('hidden');
         }
