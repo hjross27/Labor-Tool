@@ -42,6 +42,7 @@
                     <div id="labor-percent" class="text-6xl font-bold mono"></div>
                     <div id="status" class="text-5xl my-4"></div>
                     <div id="labor-cost" class="mono text-lg"></div>
+                    <div id="hourly-suggestion" class="mt-6 text-sm"></div>
                 </div>
             </div>
 
@@ -108,10 +109,19 @@
             const revenue = parseFloat(document.getElementById('hourly-revenue').value) || 0;
             if (revenue === 0) return alert("Enter expected revenue");
             const percent = (hours * rate / revenue) * 100;
+            const targetHours = revenue * 0.19 / rate;
+            const hoursToCut = Math.max(0, hours - targetHours);
+
             document.getElementById('labor-percent').textContent = percent.toFixed(1) + '%';
             const status = document.getElementById('status');
             status.textContent = percent < 18 ? '🟢' : percent < 20 ? '🟡' : '🔴';
             document.getElementById('labor-cost').textContent = `Cost: $${(hours*rate).toFixed(2)}`;
+
+            let suggestion = '';
+            if (percent > 19) {
+                suggestion = `<span class="text-red-400">Suggestion: Cut ~${hoursToCut.toFixed(1)} hours now to reach 19%.</span>`;
+            }
+            document.getElementById('hourly-suggestion').innerHTML = suggestion;
             document.getElementById('hourly-result').classList.remove('hidden');
         }
 
